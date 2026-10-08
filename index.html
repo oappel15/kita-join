@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>הצטרפות ל-Kita · אתרי שיעור לכיתה</title>
+<style>
+:root{--ink:#3B4A5C;--muted:#5D6B7C;--paper:#FFF9F2;--peach:#FAD3B6;--lilac:#D9CCF0;--mint:#C9EBD6;--sky:#C7DDF4;--btn:#5BA9AE;--btn2:#2F6F7A}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:"Segoe UI","Noto Sans Hebrew",Arial,system-ui,sans-serif;color:var(--ink);background:linear-gradient(135deg,var(--sky),var(--lilac) 50%,var(--peach));padding:18px;line-height:1.7}
+main{background:var(--paper);max-width:480px;width:100%;border-radius:26px;padding:26px 24px 20px;box-shadow:0 4px 0 rgba(59,74,92,.12),0 14px 34px rgba(59,74,92,.14);text-align:center;border:3px solid #fff}
+.art{width:96px;height:96px;margin:0 auto 4px}
+h1{font-size:1.55rem;margin:.2em 0 .3em}
+p{margin:.5em 0}
+.code{display:inline-block;direction:ltr;font-family:ui-monospace,Consolas,monospace;font-weight:700;letter-spacing:.06em;background:var(--mint);border-radius:10px;padding:1px 10px}
+.btn{display:inline-block;margin:12px 0 6px;background:var(--btn);color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem;border:2px solid var(--btn2);border-radius:14px;padding:10px 22px}
+.btn:hover,.btn:focus-visible{background:var(--btn2)}
+.fallback{font-size:.95rem;color:var(--muted);background:#fff;border-radius:14px;padding:8px 12px;margin-top:10px}
+.mail{direction:ltr;unicode-bidi:embed;font-weight:700;color:var(--ink)}
+.small{font-size:.85rem;color:var(--muted);margin-top:14px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<svg class="art" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="56" fill="#FBE6A2"/><rect x="22" y="38" width="76" height="50" rx="8" fill="#fff" stroke="#3B4A5C" stroke-width="4"/><path d="M24 42l36 26 36-26" fill="none" stroke="#3B4A5C" stroke-width="4" stroke-linejoin="round"/><circle cx="92" cy="34" r="12" fill="#F4A492" stroke="#3B4A5C" stroke-width="3"/><path d="M87 34h10M92 29v10" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M14 24l4 4M18 24l-4 4M100 96l4 4M104 96l-4 4" stroke="#3B4A5C" stroke-width="2.5" stroke-linecap="round"/></svg>
+
+<section id="ok" hidden>
+  <h1>שמחים שהגעת! 💛</h1>
+  <p>עוד רגע ייפתח מייל מוכן לשליחה ל-Kita, עם קוד ההפניה <span class="code" id="code-show"></span>.</p>
+  <p>ממלאים כיתה, מקצוע ומה רוצים שיהיה באתר – ושולחים.</p>
+  <a class="btn" id="mail-btn" href="mailto:kita.lessons@gmail.com">✉️ פתיחת המייל</a>
+  <p class="fallback">המייל לא נפתח? אפשר לכתוב ישירות אל <span class="mail">kita.lessons@gmail.com</span> ולשים בנושא את הקוד <span class="code" id="code-show2"></span>.</p>
+</section>
+
+<section id="bad" hidden>
+  <h1>אופס, הקישור לא שלם 🙈</h1>
+  <p>לא הצלחנו לזהות קוד הפניה בקישור הזה. אולי חלק ממנו נחתך בדרך?</p>
+  <p class="fallback">אפשר לבקש מהמורה ששלחה לך את ההזמנה את הקישור שוב, או לכתוב אל <span class="mail">kita.lessons@gmail.com</span> ולשים בנושא את קוד ההפניה מההזמנה (למשל <span class="code">ABC-12XY</span>).</p>
+</section>
+
+<noscript><h1>הצטרפות ל-Kita</h1><p class="fallback">כתבו אל <span class="mail">kita.lessons@gmail.com</span> ושימו בנושא את קוד ההפניה שמופיע בקישור שקיבלתם.</p></noscript>
+<p class="small">Kita · אתרי שיעור אינטראקטיביים לכיתה, לפי בקשה במייל</p>
+</main>
+<script>
+(function(){
+  "use strict";
+  var TO = "kita.lessons@gmail.com", RE = /^[A-Z]{3}-[A-Z0-9]{4}$/;
+  function readCode(){
+    var m = location.pathname.match(/^\/r\/([^\/?#]+)\/?$/), raw = "";
+    if (m) { try { raw = decodeURIComponent(m[1]); } catch (e) { raw = m[1]; } }
+    if (!raw) { try { raw = new URLSearchParams(location.search).get("c") || ""; } catch (e) {} }
+    return raw.trim().toUpperCase();
+  }
+  var code = readCode();
+  if (!RE.test(code)) { document.getElementById("bad").hidden = false; window.__kitaJoin = { valid: false, code: code }; return; }
+  var subject = "בקשה לאתר שיעור | קוד הפניה " + code;
+  var body = "שלום, הגעתי בהפניה (קוד " + code + ").\nכיתה:\nמקצוע:\nמה הייתי רוצה שיהיה באתר:\n";
+  var href = "mailto:" + TO + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body.replace(/\n/g, "\r\n"));
+  document.getElementById("code-show").textContent = code;
+  document.getElementById("code-show2").textContent = code;
+  document.getElementById("mail-btn").setAttribute("href", href);
+  document.getElementById("ok").hidden = false;
+  window.__kitaJoin = { valid: true, code: code, href: href };
+  setTimeout(function(){ window.location.href = href; }, 150);
+})();
+</script>
+</body>
+</html>
