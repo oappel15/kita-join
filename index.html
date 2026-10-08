@@ -16,6 +16,8 @@ p{margin:.5em 0}
 .code{display:inline-block;direction:ltr;font-family:ui-monospace,Consolas,monospace;font-weight:700;letter-spacing:.06em;background:var(--mint);border-radius:10px;padding:1px 10px}
 .btn{display:inline-block;margin:12px 0 6px;background:var(--btn);color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem;border:2px solid var(--btn2);border-radius:14px;padding:10px 22px}
 .btn:hover,.btn:focus-visible{background:var(--btn2)}
+.btn-alt{background:#fff;color:var(--btn2)}
+.btn-alt:hover,.btn-alt:focus-visible{background:var(--mint)}
 .fallback{font-size:.95rem;color:var(--muted);background:#fff;border-radius:14px;padding:8px 12px;margin-top:10px}
 .mail{direction:ltr;unicode-bidi:embed;font-weight:700;color:var(--ink)}
 .small{font-size:.85rem;color:var(--muted);margin-top:14px}
@@ -28,10 +30,11 @@ p{margin:.5em 0}
 
 <section id="ok" hidden>
   <h1>שמחים שהגעת! 💛</h1>
-  <p>עוד רגע ייפתח מייל מוכן לשליחה ל-Kita, עם קוד ההפניה <span class="code" id="code-show"></span>.</p>
-  <p>ממלאים כיתה, מקצוע ומה רוצים שיהיה באתר – ושולחים.</p>
-  <a class="btn" id="mail-btn" href="mailto:kita.lessons@gmail.com">✉️ פתיחת המייל</a>
-  <p class="fallback">המייל לא נפתח? אפשר לכתוב ישירות אל <span class="mail">kita.lessons@gmail.com</span> ולשים בנושא את הקוד <span class="code" id="code-show2"></span>.</p>
+  <p>בוחרים איפה לפתוח מייל מוכן ל-Kita, עם קוד ההפניה <span class="code" id="code-show"></span>.</p>
+  <p>ממלאים כיתה, מקצוע ומה רוצים שיהיה באתר, ושולחים.</p>
+  <a class="btn" id="gmail-btn" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=kita.lessons@gmail.com">פתיחה ב-Gmail</a><br>
+  <a class="btn btn-alt" id="mail-btn" href="mailto:kita.lessons@gmail.com">✉️ אפליקציית מייל אחרת</a>
+  <p class="fallback">לא מסתדר? אפשר לכתוב ישירות אל <span class="mail">kita.lessons@gmail.com</span> ולשים בנושא את הקוד <span class="code" id="code-show2"></span>.</p>
 </section>
 
 <section id="bad" hidden>
@@ -48,7 +51,7 @@ p{margin:.5em 0}
   "use strict";
   var TO = "kita.lessons@gmail.com", RE = /^[A-Z]{3}-[A-Z0-9]{4}$/;
   function readCode(){
-    var m = location.pathname.match(/^\/r\/([^\/?#]+)\/?$/), raw = "";
+    var m = location.pathname.match(/^\/[rw]\/([^\/?#]+)\/?$/), raw = "";
     if (m) { try { raw = decodeURIComponent(m[1]); } catch (e) { raw = m[1]; } }
     if (!raw) { try { raw = new URLSearchParams(location.search).get("c") || ""; } catch (e) {} }
     return raw.trim().toUpperCase();
@@ -56,14 +59,24 @@ p{margin:.5em 0}
   var code = readCode();
   if (!RE.test(code)) { document.getElementById("bad").hidden = false; window.__kitaJoin = { valid: false, code: code }; return; }
   var subject = "בקשה לאתר שיעור | קוד הפניה " + code;
-  var body = "שלום, הגעתי בהפניה (קוד " + code + ").\nכיתה:\nמקצוע:\nמה הייתי רוצה שיהיה באתר:\n";
-  var href = "mailto:" + TO + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body.replace(/\n/g, "\r\n"));
+  var RL = function(t){ return "\u202b" + t + "\u202c"; };
+  var body = [RL("שלום, הגעתי בהפניה (קוד " + code + ")."), RL("כיתה:"), RL("מקצוע:"), RL("מה הייתי רוצה שיהיה באתר:"), ""].join("\r\n");
+  var q = "subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+  var href = "mailto:" + TO + "?" + q;
+  var ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  var gweb = "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(TO) + "&su=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+  var gbtn = document.getElementById("gmail-btn");
+  if (ios) {
+    gbtn.setAttribute("href", "googlegmail://co?to=" + encodeURIComponent(TO) + "&" + q);
+    gbtn.addEventListener("click", function(){ var t = Date.now(); setTimeout(function(){ if (!document.hidden && Date.now() - t < 2500) window.location.href = gweb; }, 1500); });
+  } else {
+    gbtn.setAttribute("href", gweb);
+  }
   document.getElementById("code-show").textContent = code;
   document.getElementById("code-show2").textContent = code;
   document.getElementById("mail-btn").setAttribute("href", href);
   document.getElementById("ok").hidden = false;
-  window.__kitaJoin = { valid: true, code: code, href: href };
-  setTimeout(function(){ window.location.href = href; }, 150);
+  window.__kitaJoin = { valid: true, code: code, href: href, gmail: gbtn.getAttribute("href") };
 })();
 </script>
 </body>
