@@ -1,13 +1,32 @@
 {
   "cleanUrls": false,
   "rewrites": [
-    { "source": "/r/:code", "destination": "/index.html" },
-    { "source": "/r/:code/", "destination": "/index.html" }
+    {
+      "source": "/r/:code",
+      "destination": "/api/r?c=:code"
+    },
+    {
+      "source": "/r/:code/",
+      "destination": "/api/r?c=:code"
+    },
+    {
+      "source": "/:code([A-Za-z]{3}-[A-Za-z0-9]{4})",
+      "destination": "/api/r?c=:code"
+    }
   ],
   "headers": [
-    { "source": "/(.*)", "headers": [
-      { "key": "Referrer-Policy", "value": "no-referrer" },
-      { "key": "X-Robots-Tag", "value": "noindex" }
-    ] }
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    }
   ]
 }
