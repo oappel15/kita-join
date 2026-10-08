@@ -60,7 +60,22 @@ p{margin:.5em 0}
   if (!RE.test(code)) { document.getElementById("bad").hidden = false; window.__kitaJoin = { valid: false, code: code }; return; }
   var subject = "בקשה לאתר שיעור | קוד הפניה " + code;
   var RL = function(t){ return "\u202b" + t + "\u202c"; };
-  var body = [RL("שלום, הגעתי בהפניה (קוד " + code + ")."), RL("כיתה:"), RL("מקצוע:"), RL("מה הייתי רוצה שיהיה באתר:"), ""].join("\r\n");
+  var body = [
+    "שלום, הגעתי בהפניה (קוד " + code + ").",
+    "",
+    "מה אפשר לבקש מ-Kita:",
+    "• אתר שיעור אינטראקטיבי בנושא אחד, עם משימות, משחקים, סרטונים ובחנים",
+    "• אתר שנתי למקצוע, שנבנה לפי תוכנית הלימודים של משרד החינוך",
+    "• בכל אתר יש אזור מורים עם מערכי שיעור וכרטיסיות משימה להדפסה",
+    "",
+    "מה חייבים לכתוב: כיתה ומקצוע. אפשר להוסיף נושא, ספר לימוד, מבנה שיעור, רמות או כל דבר אחר, אבל זה לא חובה.",
+    "חומרים: אפשר לצרף קישורים או קבצים שחשוב שייכנסו, או להשאיר לנו לאסוף חומרים בעצמנו.",
+    "",
+    "דוגמאות: \"אתר שנתי למדעים לכיתה ד׳\", או \"שיעור על מחזור המים לכיתה ה׳, עם משחק וחידון בסוף\".",
+    "",
+    "הבקשה שלי:",
+    ""
+  ].map(function (t) { return t ? RL(t) : t; }).join("\r\n");
   var q = "subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
   var href = "mailto:" + TO + "?" + q;
   var ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
